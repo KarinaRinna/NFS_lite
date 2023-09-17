@@ -1,7 +1,9 @@
+import random
 import pygame
 import pygame.freetype
 from my_car import MyCar
 from road import Road
+from traffic import TrafficCar
 
 
 pygame.init()
@@ -19,6 +21,10 @@ road_group = pygame.sprite.Group()
 spawn_road_time = pygame.USEREVENT
 pygame.time.set_timer(spawn_road_time, 1000)
 
+traffic_cars_group = pygame.sprite.Group()
+spawn_traffic_time = pygame.USEREVENT + 1
+pygame.time.set_timer(spawn_traffic_time, 1000)
+
 def get_car_image(filename, size, angle):
     image = pygame.image.load(filename)
     image = pygame.transform.scale(image, size)
@@ -30,19 +36,33 @@ my_car_image = get_car_image('images/mercedes.png', (100, 70), -90)
 road_image = pygame.image.load('images/road.png')
 road_image = pygame.transform.scale(road_image, (500, 800))
 
+traffic_car_images = []
+traffic_car1 = get_car_image('images/traffic_car1.png', (100, 70), 90)
+traffic_car2 = get_car_image('images/traffic_car2.png', (100, 70), -90)
+traffic_car3 = get_car_image('images/traffic_car3.png', (100, 70), -90)
+traffic_car_images.extend((traffic_car1, traffic_car2, traffic_car3))
+
 road = Road(road_image, (250, 400))
 road_group.add(road)
-road = Road(road_image, (250, 0))
+road = Road(road_image, (250, -350))
 road_group.add(road)
 
 
 def spawn_road():
-    road = Road(road_image, (250, -600))
-    road_group.add(road)
+    road_bg = Road(road_image, (250, -600))
+    road_group.add(road_bg)
+
+def spawn_traffic():
+    position = (random.randint(40, 460), random.randint(-60, -40))
+    traffic_car = TrafficCar(random.choice(traffic_car_images), position)
+    traffic_cars_group.add(traffic_car)
+    # сделать чтобы встречные ехали по встречки, а другие по пути
 
 def draw_all():
     road_group.update()
     road_group.draw(screen)
+    traffic_cars_group.update()
+    traffic_cars_group.draw(screen)
     my_car.draw(screen)
 
 
@@ -54,8 +74,11 @@ while running:
             running = False
         if event.type == spawn_road_time:
             spawn_road()
+        if event.type == spawn_traffic_time:
+            spawn_traffic()
 
     screen.fill(background_color)
+    my_car.move()
     draw_all()
     pygame.display.flip()
     clock.tick(60)
