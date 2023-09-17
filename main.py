@@ -17,6 +17,10 @@ background_color = (0, 0, 0)
 my_car_sound = pygame.mixer.Sound('sounds/engine.wav')
 my_car_sound.play(-1)
 
+crash_sound = pygame.mixer.Sound('sounds/crash.mp3')
+
+font = pygame.freetype.Font(None, 20)
+
 road_group = pygame.sprite.Group()
 spawn_road_time = pygame.USEREVENT
 pygame.time.set_timer(spawn_road_time, 1000)
@@ -54,7 +58,8 @@ def spawn_road():
 
 def spawn_traffic():
     position = (random.randint(40, 460), random.randint(-60, -40))
-    traffic_car = TrafficCar(random.choice(traffic_car_images), position)
+    speed = random.randint(7, 20)
+    traffic_car = TrafficCar(random.choice(traffic_car_images), position, speed)
     traffic_cars_group.add(traffic_car)
     # сделать чтобы встречные ехали по встречки, а другие по пути
 
@@ -78,7 +83,12 @@ while running:
             spawn_traffic()
 
     screen.fill(background_color)
-    my_car.move()
-    draw_all()
+    if my_car.game_status == 'game':
+        my_car.move()
+        draw_all()
+        my_car.crash(crash_sound, traffic_cars_group)
+    elif my_car.game_status == 'game_over':
+        font.render_to(screen, (30, 300), 'Game Over', (255, 255, 255))
+
     pygame.display.flip()
     clock.tick(60)

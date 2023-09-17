@@ -7,6 +7,7 @@ class MyCar:
         self.image = image
         self.rect = self.image.get_rect()
         self.rect.center = position
+        self.game_status = 'game'
 
     def border(self):
         if self.rect.right > 500:
@@ -22,6 +23,12 @@ class MyCar:
             self.rect.x += 4
         self.border()
 
-
     def draw(self, screen):
         screen.blit(self.image, self.rect)
+
+    def crash(self, sound, traffic_cars):
+        for car in traffic_cars:
+            if car.rect.colliderect(self.rect):
+                print('Game over')
+                sound.play()
+                self.game_status = 'game_over'
