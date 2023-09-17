@@ -12,6 +12,9 @@ screen = pygame.display.set_mode((500, 800))
 pygame.display.set_caption('NFS_lite')
 background_color = (0, 0, 0)
 
+my_car_sound = pygame.mixer.Sound('sounds/engine.wav')
+my_car_sound.play(-1)
+
 road_group = pygame.sprite.Group()
 spawn_road_time = pygame.USEREVENT
 pygame.time.set_timer(spawn_road_time, 1000)
