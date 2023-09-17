@@ -17,7 +17,9 @@ def get_car_image(filename, size, angle):
     image = pygame.transform.rotate(image, angle)
     return image
 
-my_car_image = get_car_image('images/mercedes.png', (50, 50), -90)
+my_car_image = get_car_image('images/mercedes.png', (100, 70), -90)
+road_image = pygame.image.load('images/road.png')
+road_image = pygame.transform.scale(road_image, (500, 800))
 
 my_car = MyCar((250, 600), my_car_image)
 running = True
@@ -26,6 +28,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
     screen.fill(background_color)
+    screen.blit(road_image, (0, 0))
     my_car.draw(screen)
     pygame.display.flip()
     clock.tick(60)
